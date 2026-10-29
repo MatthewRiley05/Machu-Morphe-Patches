@@ -21,17 +21,23 @@ Add this repository as a patch source in Morphe Manager:
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0-dev.1](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.0.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+<details open>
+<summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
 
-<!-- Do not modify this section by hand. The patch list is generated when release.yml creates a new release.
+**Package name:** `com.miui.miwallpaper.earth`
 
-     If you wish for the patches list to be collapsed, then remove the word 'EXPANDED' from the comment tag above.
+**🎯 Supported versions:**
 
-     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END
-     comment blocks entirely. -->
+| ALPHA-2.6.561-11211547-ogl-64-fix1 |
+| :---: |
 
-#### A list of patches will automatically be shown here after the first release is created.
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Unlock Earth Super Wallpaper](#unlock-earth-super-wallpaper) | Restores the lock-to-home unlock animation and prevents the wallpaper from pausing while it is visible on AOSP-based ROMs. |  |
 
-&nbsp;
+</details>
 
 <!-- PATCHES_END -->
 
