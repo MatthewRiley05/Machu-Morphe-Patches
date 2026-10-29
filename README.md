@@ -1,18 +1,20 @@
-# 👋🧩 Morphe Patches template
+# 🧩 Machu Morphe Patches
 
-Template repository for Morphe Patches.
+Unofficial [Morphe](https://morphe.software) patches for apps I use.
 
 ## ❓ About
 
-Patches for apps I like.
-
-<!-- TODO: Update this about section with a brief introduction/summary about this repo and what it offers. -->
+This repository contains patches that restore functionality I need on my own
+devices. The patches are built and released automatically from the `dev`
+branch as Morphe pre-releases.
 
 ### How to use these patches
 
-Click the button below, or manually add this repo url to Morphe Manager: https://github.com/xyz-user/xyz-patches
+Add this repository as a patch source in Morphe Manager:
 
-<a href="https://morphe.software/add-source?github=xyz-user/xyz-patches">
+<https://github.com/MatthewRiley05/Machu-Morphe-Patches>
+
+<a href="https://morphe.software/add-source?github=MatthewRiley05/Machu-Morphe-Patches">
   <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" height="48">
 </a>
 
@@ -21,83 +23,130 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 <!-- PATCHES_START EXPANDED -->
 
 <!-- Do not modify this section by hand. The patch list is generated when release.yml creates a new release.
-     
+
      If you wish for the patches list to be collapsed, then remove the word 'EXPANDED' from the comment tag above.
 
-     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END 
+     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END
      comment blocks entirely. -->
 
-#### A list of your patches will automatically be shown here after your first patches release is created.
+#### A list of patches will automatically be shown here after the first release is created.
 
 &nbsp;
 
-## 🚀 Getting development started
-
-To start using this template, follow these steps:
-
-1. [Setup](https://github.com/MorpheApp/morphe-documentation/blob/main/docs/morphe-development/README.md) your development environment including adding a GitHub PAT as described [here](https://github.com/MorpheApp/morphe-patcher/blob/main/docs/2_1_setup.md#-prepare-the-environment).
-2. [Create a new repository using this template](https://github.com/new?template_name=morphe-patches-template&template_owner=MorpheApp). Select create a new repository, and **enable 'Include all branches'** 
-3. Enable "Allow GitHub Actions to create and approve pull requests" in your repo Settings > Actions > General > Workflow permissions
-4. Update the [build.gradle.kts](patches/build.gradle.kts) file (Specifically, the 
-   [group of the project](patches/build.gradle.kts#L1), and the [About](patches/build.gradle.kts#L6-L11))
-5. Update the [README.md](README.md) file to be specific of your repo, and update the links in the [issue templates](.github/ISSUE_TEMPLATE).
-6. Choose a name for your patches project. Keep in mind you must use a name that does not 
-   imply authorship by the Morphe open source project. If unsure, then simply name these
-   patches after yourself ("UserXYZ Morphe patches"). See the [NOTICE](NOTICE) for details. 
-7. (Optional): Add `patches-bundle.png` to the project if you want a custom icon to show in
-   Morphe Manager instead of your GitHub profile avatar.
-8. (Optional): Sign your releases, so Morphe Manager refuses a release that was changed or swapped after you published it:
-   1. Run `./gradlew generateSigningKey`. It creates `morphe-signing.pub` and `morphe-signing.key`.
-   2. Commit `morphe-signing.pub`. Never commit `morphe-signing.key`, it is already ignored by git.
-   3. Add the content of `morphe-signing.key` as the `MORPHE_SIGNING_KEY` secret in your repo
-      Settings > Secrets and variables > Actions, then keep a backup of it somewhere safe and delete the file.
-
-   Every release is signed from then on. If you lose the key or it leaks, create a new one the same way;
-   users then have to confirm the new key in Morphe Manager before they get your next release.
-
-🎉 You are now ready to start creating patches!
-
-## 🧑‍💻 Dev usage
-
-To develop and release your Patches using this template:
-
-- **Make all changes to the `dev` branch.**
-- For local development work build your patches using the gradle task `./gradlew buildAndroid` to generate the mpp file found in `patches/build/libs/patches-*.mpp`. Apply your patches locally using Morphe Desktop tool like any other patch bundle.
-- Always use [Semantic commit](https://kapeli.com/cheat_sheets/Semantic_Commits.docset/Contents/Resources/Documents/index) messages for commits. To keep it simple use only 3 commit message types: 
-  - `feat: Added a new feature`
-  - `fix: Some problem now fixed`
-  - `chore: Random change you do not want in the user facing changelog`
-- Commits of `fix:` and `feat:` will automatically generate new pre-releases and `chore:` will not create a new release.
-- Users can apply your dev branch releases by enabling `pre-release` in Morphe Manager patch sources.
-- When your dev branch is ready, and you want a stable release, merge dev branch to main (do not squash, and only merge).
-- **Always use semantic release (release.yml)**. Do not manually upload or create releases by hand
-  because many files must be updated and release.yml handles everything.
-
-## 🤓 Tips
-- See the [patcher documentation](https://github.com/MorpheApp/morphe-patcher/blob/main/docs/1_patcher_intro.md) for more examples of creating patches and fingerprints.
-- Do not use AI to create new release scripts. The `release.yml` here already handles everything.
-  If you need something custom with your releases then modify the existing `release.yml`
-  and `.releaserc` instead of writing everything new from scratch.
-- Do not manually edit or manually commit any generated files such as: `patches-list.json`,
-  `patches-bundle.json`, `CHANGELOG.md`.  These files will be automatically updated by `release.yml`.
-- Do not force push any semantic release commits as that will break all future releases.
-  If you need to fix a broken release, it's always easiest to create a new release instead of 
-  fixing an existing release.
-
-
-<!-- The patches end tag is intentionally placed here so the first release will clean up 
-     this readme of all developer instructions above. -->
 <!-- PATCHES_END -->
 
-### 🛠️ Building locally
+## 🌎 Earth Super Wallpaper – AOSP unlock + idle animation
+
+Unofficial patch for `com.miui.miwallpaper.earth` that restores the
+lock → home transition and keeps the wallpaper animating on AOSP-based ROMs
+(Pixel, Android 14–17).
+
+**Tested on:** Pixel 10 Pro XL, Android 17, with the base APK below.
+
+> **Not affiliated with Xiaomi, Google, Ouxyl or AppPorts.** This repository
+> contains only patch code and documentation. It does **not** contain the APK,
+> decompiled sources, assets, native libraries or signing keys. You must
+> supply your own copy of the APK.
+
+### Base APK
+
+The latest APK this patch was built and tested against is
+**SuperWallpaperEarth (Ouxyl's port)** `ALPHA-2.6.561-11211547-ogl-64-fix1`
+(`versionCode 206000561`, package `com.miui.miwallpaper.earth`). The copy used
+here was signed with an AppPorts certificate.
+
+Other ports/versions may work, but the smali context must match. If Morphe
+reports a failed fingerprint, the smali has changed and the patch needs
+updating.
+
+### Symptom
+
+1. The wallpaper renders (including the AOD/lock frame), but unlocking never
+   animates from the lock-screen framing to the home-screen framing.
+2. After a few seconds without touching the screen, the wallpaper stutters and
+   freezes; touching or swiping starts it again for a few seconds.
+
+### Root cause
+
+On Android 14+ the app disables its old broadcast-based screen/unlock handling:
+
+```smali
+# SuperWallpaper.smali
+invoke-static {}, Lcom/miui/miwallpaper/utils/SystemBuildUtils;->isAndroidUAtLeast()Z
+iput-boolean v0, ...,->USE_COMMAND_NOTIFICATION:Z
+```
+
+With `USE_COMMAND_NOTIFICATION = true` it does **not** register
+`ACTION_USER_PRESENT` / `ACTION_SCREEN_ON` / `ACTION_SCREEN_OFF`, and its
+`USER_PRESENT` branch returns early. Instead it waits for
+`android.wallpaper.keyguardgoingaway`.
+
+On Android 16+ (including Android 17) that command is only delivered to apps
+holding:
+
+```
+android.permission.SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE
+```
+
+which is `signature|module|role` — a sideloaded APK can never get it, and
+`adb shell pm grant` refuses it. The unlock event is silently dropped, so the
+Unity `"Desk"` message is never sent.
+
+Separately, the app schedules `MSG_UNITY_PAUSE` five seconds after unlock and
+after every wallpaper offset change. `unityPause()` calls
+`UnityPlayer.pause()`, so the scene freezes until the launcher sends another
+offset change (which calls `unityResume()`).
+
+### What the patch changes
+
+| #   | Target                                                  | Change                                                                                                  |
+| --- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | `SuperWallpaper.smali`                                  | Register `android.intent.action.USER_PRESENT` unconditionally (also in command mode).                   |
+| 2   | `SuperWallpaper$8.smali`                                | Replace the `USE_COMMAND_NOTIFICATION` early-return with `nop` so the `USER_PRESENT` branch runs.       |
+| 3   | `SuperWallpaper$8$1.smali`                              | Drop the `DisplayUtils.getDisplayState() == DESK` check that could discard the unlock during animation. |
+| 4   | `SuperWallpaper$8.smali`                                | Post `"Desk"` with 0 ms instead of 100 ms.                                                              |
+| 5   | `SuperWallpaper$SuperWallpaperEngine.smali`             | Delay the AOD zoom-out by 500 ms so it does not run during the display fade.                            |
+| 6   | `SuperWallpaper.smali`                                  | Raise the three pause delays from 5000 ms to `0x7fffffff` so Unity is not paused while visible.         |
+
+The hard-coded 2 s pause on screen-off and the visibility path are untouched, so
+the scene still stops when the display is off or the wallpaper is hidden.
+
+### Notes / limitations
+
+- The unlock transition starts when SystemUI sends `ACTION_USER_PRESENT`, which
+  is after the unlock animation finishes. The earlier `keyguardgoingaway`
+  signal is permission-gated on Android 16+, so a normal app cannot start the
+  wallpaper transition sooner.
+- Raising the pause delays means the scene keeps rendering while the wallpaper
+  is visible. Screen-off and hidden-wallpaper paths still pause.
+- No version bump is included in the patch.
+- This patch was generated using AI as I don't specialize in this type of
+  programming. However, it is tested on my personal device.
+
+## 🛠️ Building locally
 
 - Run `./gradlew buildAndroid`
-- The built patches .mpp file is found in `patches/build/libs/patches-*.mpp`
-- Patch the mpp file using [Morphe-Desktop](https://github.com/MorpheApp/morphe-desktop)
+- The built patches `.mpp` file is found in `patches/build/libs/patches-*.mpp`
+- Patch the `.mpp` file using [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop)
   like any other patch bundle.
 
-See the [Morphe documentation](https://github.com/MorpheApp/morphe-documentation) for more information.
+See the [Morphe documentation](https://github.com/MorpheApp/morphe-documentation)
+for more information.
+
+## 🧑‍💻 Development
+
+- Make changes on the `dev` branch.
+- Use [semantic commit](https://www.conventionalcommits.org/) messages:
+  `feat:` for new features, `fix:` for fixes, and `chore:` for changes that
+  should not appear in the changelog.
+- `fix:` and `feat:` commits automatically create a new pre-release from `dev`.
+  `chore:` commits do not create a release.
+- When `dev` is ready for a stable release, merge it into `main` without
+  squashing.
+- Do not manually edit generated files such as `patches-list.json`,
+  `patches-bundle.json` or `CHANGELOG.md`; `release.yml` updates them.
 
 ## 📜 License
 
-UserXYZ Patches are licensed under the [GNU General Public License v3.0](LICENSE)
+Machu Morphe Patches are licensed under the
+[GNU General Public License v3.0](LICENSE).

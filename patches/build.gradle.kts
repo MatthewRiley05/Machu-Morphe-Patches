@@ -1,14 +1,13 @@
-group = "app.template"
+group = "io.github.matthewriley05"
 
 patches {
-    // TODO: Update this section with your project details.
     about {
-        name = "UserXYZ Patches"
-        description = "Patches for apps I like"
-        source = "git@github.com:UserXYZ/morphe-patches.git"
-        author = "Awesome dev"
-        contact = "na"
-        website = "na"
+        name = "Machu Patches"
+        description = "Unofficial patches for apps I use."
+        source = "https://github.com/MatthewRiley05/Machu-Morphe-Patches"
+        author = "MatthewRiley05"
+        contact = "https://github.com/MatthewRiley05/Machu-Morphe-Patches/issues"
+        website = "https://raymundo.dev"
         license = "GPLv3"
     }
 }
