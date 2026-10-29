@@ -1,4 +1,4 @@
-package app.template.extension.extension;
+package io.github.matthewriley05.machu.extension;
 
 @SuppressWarnings("unused")
 public class ExamplePatch {
