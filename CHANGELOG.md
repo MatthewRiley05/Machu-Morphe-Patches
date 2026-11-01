@@ -1,3 +1,9 @@
+## [2.0.0-dev.2](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v2.0.0-dev.1...v2.0.0-dev.2) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** keep the player field valid across engine handoff ([7fd5ead](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/7fd5eadb5b73e48da6e6a7e2d2b7d56f93b42405))
+
 ## [2.0.0-dev.1](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.13...v2.0.0-dev.1) (2026-11-01)
 
 ### ⚠ BREAKING CHANGES
