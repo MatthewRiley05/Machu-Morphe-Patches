@@ -21,7 +21,7 @@ Add this repository as a patch source in Morphe Manager:
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.0-dev.11](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.11)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+> **[v1.1.0-dev.12](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.12)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
 <details open>
 <summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>

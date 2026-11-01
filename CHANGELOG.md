@@ -1,3 +1,9 @@
+## [1.1.0-dev.12](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.11...v1.1.0-dev.12) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** use the correct desk delay register ([d9b4a68](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/d9b4a68434510e728ac502f1fcea4843735a64fc))
+
 ## [1.1.0-dev.11](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.10...v1.1.0-dev.11) (2026-11-01)
 
 ### 🐛 Bug Fixes
