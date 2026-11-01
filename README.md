@@ -8,6 +8,12 @@ This repository contains patches that restore functionality I need on my own
 devices. The patches are built and released automatically from the `dev`
 branch as Morphe pre-releases.
 
+### Version 2.0
+
+The 2.0 line targets only the official Filament build
+(`ALPHA-2.6.575-09041449-ogl-64`). The old 2.6.561 Unity port and its legacy
+patch paths were removed.
+
 ### How to use these patches
 
 Add this repository as a patch source in Morphe Manager:
