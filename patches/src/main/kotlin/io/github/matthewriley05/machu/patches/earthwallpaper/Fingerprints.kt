@@ -111,6 +111,34 @@ internal object FilamentDeskMessagePostFingerprint : Fingerprint(
 )
 
 /**
+ * The `USER_PRESENT` branch of the Filament receiver returns early when
+ * `mStateEvent` is `"Desk"` or when the engine thinks it is a preview. On AOSP
+ * those states can be stale, so the unlock is silently dropped.
+ */
+internal object FilamentUserPresentBranchFingerprint : Fingerprint(
+    superclass = "Landroid/content/BroadcastReceiver;",
+    name = "onReceive",
+    returnType = "V",
+    parameters = ON_RECEIVE_PARAMETERS,
+    filters = listOf(
+        methodCall(
+            definingClass = BASE_EARTH_SUPER_WALLPAPER,
+            name = "access\$1300",
+            returnType = "Ljava/lang/String;",
+        ),
+        string("Desk"),
+        opcode(Opcode.IF_NEZ),
+        methodCall(
+            definingClass = BASE_EARTH_SUPER_WALLPAPER,
+            name = "access\$000",
+            returnType = "Z",
+        ),
+        opcode(Opcode.IF_EQZ),
+        opcode(Opcode.GOTO),
+    ),
+)
+
+/**
  * The `Runnable` posted by the receiver discards the `"Desk"` message unless
  * the display state is `DESK` (4).
  *

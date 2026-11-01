@@ -154,9 +154,7 @@ val earthSuperWallpaperPatch = bytecodePatch(
             """
                 invoke-static { p1 }, $EARTH_POSITION_CLASS->get(Ljava/lang/String;)I
                 move-result v0
-                if-ltz v0, :known_position
-                goto :original_position_lookup
-                :known_position
+                if-ltz v0, :original_position_lookup
                 return v0
             """,
             ExternalLabel("original_position_lookup", originalFirstInstruction),
@@ -185,10 +183,22 @@ val earthSuperWallpaperPatch = bytecodePatch(
             )
         }
 
+        // Always continue the USER_PRESENT branch, even when the cached state
+        // says "Desk" or the engine still thinks it is a preview.
+        val userPresentMatch = FilamentUserPresentBranchFingerprint.matchOrNull()
+            ?: throw PatchException("Failed to match $FilamentUserPresentBranchFingerprint")
+
+        val userPresentMethod = userPresentMatch.method
+        listOf(2, 4, 5).forEach { filterIndex ->
+            userPresentMethod.replaceInstruction(
+                userPresentMatch.instructionMatches[filterIndex].index,
+                "nop",
+            )
+        }
+
         // Do not discard the unlock while the display state is changing.
         val displayStateMatch = FilamentDisplayStateCheckFingerprint.matchOrNull()
             ?: throw PatchException("Failed to match $FilamentDisplayStateCheckFingerprint")
-
         val branchIndex = displayStateMatch.instructionMatches[3].index
         val displayStateMethod = displayStateMatch.method
         val branch = displayStateMethod.getInstruction<BuilderOffsetInstruction>(branchIndex)
