@@ -20,4 +20,4 @@ plugins {
     id("app.morphe.patches") version "2.1.0-dev.1"
 }
 
-include(":extensions:earth:stub")
+include(":stubs:earth")

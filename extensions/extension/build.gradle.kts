@@ -12,5 +12,5 @@ android {
 }
 
 dependencies {
-    compileOnly(project(":extensions:earth:stub"))
+    compileOnly(project(":stubs:earth"))
 }
