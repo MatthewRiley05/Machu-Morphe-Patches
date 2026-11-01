@@ -1,3 +1,9 @@
+## [1.1.0-dev.5](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** align position 0 and remove preview duplicate ([b49eed3](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/b49eed3c04b3ef037960b97b38f7e02b8d64efc3))
+
 ## [1.1.0-dev.4](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2026-11-01)
 
 ### 🐛 Bug Fixes
