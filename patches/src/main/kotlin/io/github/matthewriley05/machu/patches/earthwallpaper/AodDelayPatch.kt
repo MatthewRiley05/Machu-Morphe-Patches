@@ -70,7 +70,7 @@ val earthSuperWallpaperAodDelayPatch = bytecodePatch(
         method.addInstructions(
             index + 1,
             """
-                invoke-static { v1 }, $BASE_EARTH_SUPER_WALLPAPER->access\$100($BASE_EARTH_SUPER_WALLPAPER)Landroid/os/Handler;
+                invoke-static { v1 }, $BASE_EARTH_SUPER_WALLPAPER->access${'$'}100($BASE_EARTH_SUPER_WALLPAPER)Landroid/os/Handler;
                 move-result-object v1
                 const-wide/16 v2, 0x${delay.toString(16)}
                 invoke-static { v1, p0, v0, v2, v3 }, $AOD_DELAY_HELPER->post(Landroid/os/Handler;$BASE_EARTH_ENGINE;IJ)V
