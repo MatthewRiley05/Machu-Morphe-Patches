@@ -10,6 +10,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -107,6 +108,7 @@ val earthSuperWallpaperPatch = bytecodePatch(
         val video24Method = video24Match.method
         val video24Instructions = video24Method.implementation!!.instructions
 
+        var replacedDeviceReads = 0
         for (index in video24Instructions.indices.reversed()) {
             val instruction = video24Instructions[index]
             val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
@@ -114,7 +116,15 @@ val earthSuperWallpaperPatch = bytecodePatch(
             if (field != null && field.definingClass == MIUI_BUILD && field.name == "DEVICE") {
                 val register = (instruction as OneRegisterInstruction).registerA
                 video24Method.replaceInstruction(index, "const-string v$register, \"\"")
+                replacedDeviceReads++
             }
+        }
+
+        if (replacedDeviceReads == 0) {
+            throw PatchException(
+                "supportVideo24Wallpaper() no longer reads miui.os.Build.DEVICE; " +
+                    "update the AOSP compatibility patch.",
+            )
         }
 
         // ------------------------------------------------------------------
@@ -127,6 +137,7 @@ val earthSuperWallpaperPatch = bytecodePatch(
         val weatherMethod = weatherMatch.method
         val weatherInstructions = weatherMethod.implementation!!.instructions
 
+        var removedWrites = 0
         for (index in weatherInstructions.indices.reversed()) {
             val instruction = weatherInstructions[index]
             val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
@@ -136,7 +147,15 @@ val earthSuperWallpaperPatch = bytecodePatch(
                 (reference.name == "putLong" || reference.name == "putInt")
             ) {
                 weatherMethod.replaceInstruction(index, "nop")
+                removedWrites++
             }
+        }
+
+        if (removedWrites == 0) {
+            throw PatchException(
+                "WeatherUtils.onPostExecute() no longer writes Settings.Global; " +
+                    "update the weather-settings patch.",
+            )
         }
 
         // ------------------------------------------------------------------
@@ -215,9 +234,13 @@ val earthSuperWallpaperPatch = bytecodePatch(
         val deskMessageMatch = FilamentDeskMessagePostFingerprint.matchOrNull()
             ?: throw PatchException("Failed to match $FilamentDeskMessagePostFingerprint")
 
+        val deskMessageCall = deskMessageMatch.instructionMatches.last()
+        val delayRegister =
+            deskMessageCall.getInstruction<FiveRegisterInstruction>().registerD
+
         deskMessageMatch.method.addInstruction(
-            deskMessageMatch.instructionMatches.last().index,
-            "const-wide/16 v3, 0x0",
+            deskMessageCall.index,
+            "const-wide/16 v$delayRegister, 0x0",
         )
     }
 }
