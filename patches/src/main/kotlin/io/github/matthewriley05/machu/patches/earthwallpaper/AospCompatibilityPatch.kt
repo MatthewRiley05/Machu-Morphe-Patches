@@ -56,6 +56,21 @@ val earthSuperWallpaperAospCompatibilityPatch = bytecodePatch(
                 match.method.replaceInstruction(index, "const v$register, 0x0")
             }
 
+            // android.provider.MiuiSettings.System -> false
+            val darkModeMatch = DarkModeMiuiSettingsFingerprint.matchOrNull()
+                ?: throw PatchException("Failed to match $DarkModeMiuiSettingsFingerprint")
+
+            val darkModeMethod = darkModeMatch.method
+            val miuiSettingsIndex = darkModeMatch.instructionMatches.first().index
+            val moveResult =
+                darkModeMethod.getInstruction<OneRegisterInstruction>(miuiSettingsIndex + 1)
+
+            darkModeMethod.replaceInstruction(
+                miuiSettingsIndex,
+                "const/4 v${moveResult.registerA}, 0x0",
+            )
+            darkModeMethod.replaceInstruction(miuiSettingsIndex + 1, "nop")
+
             // Match the port's behaviour for MIUI settings that have no AOSP
             // equivalent.
             listOf(

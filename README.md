@@ -130,16 +130,16 @@ only the two problems above need patching there.
 
 ### What the patch changes
 
-There are two patches for the official build: **AOSP compatibility** (required
-on non-MIUI ROMs) and **Unlock Earth Super Wallpaper**. The legacy Unity port
-only needs the unlock patch because its AOSP fixes are already baked in.
+There are three patches for the official build: **Make Earth Super Wallpaper
+work on AOSP** (bytecode), **Allow Earth Super Wallpaper on AOSP** (wallpaper
+metadata), and **Unlock Earth Super Wallpaper**. The legacy Unity port only
+needs the unlock patch because its AOSP fixes are already baked in.
 
 #### AOSP compatibility (`Make Earth Super Wallpaper work on AOSP`)
 
 The official 2.6.575 build still calls MIUI framework classes that do not exist
-on AOSP. Without this patch the preview is blank and selecting the wallpaper
-leaves the previous wallpaper in place, because the wallpaper service crashes
-while loading `MiuiWallpaperManager`.
+on AOSP. Without this patch the wallpaper service crashes while loading
+`MiuiWallpaperManager` or `UIDarkModeHelper`.
 
 | #   | Target                                                | Change                                                                                                              |
 | --- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -151,6 +151,18 @@ while loading `MiuiWallpaperManager`.
 | 6   | `AodUtils.isAodOpened()`                              | Return `true` instead of reading MIUI's AOD setting.                                                                |
 | 7   | `AodUtils.isAodUsingSuperWallpaperStyle()`            | Return `true` instead of reading MIUI's `aod_using_super_wallpaper` setting.                                        |
 | 8   | `WallpaperAuthorityUtils.supportVideo24Wallpaper()`   | Replace its `miui.os.Build.DEVICE` reads with empty strings so no MIUI type remains.                                |
+| 9   | `UIDarkModeHelper$1.onChange()`                       | Return `false` instead of calling `android.provider.MiuiSettings$System.getBoolean()`.                              |
+
+#### AOSP ambient-mode metadata (`Allow Earth Super Wallpaper on AOSP`)
+
+The official `res/xml/super_wallpaper.xml` hard-codes
+`android:supportsAmbientMode="true"`. AOSP's `WallpaperManagerService` then
+requires the selected wallpaper service to hold
+`android.permission.AMBIENT_WALLPAPER`, a signature/privileged permission a
+sideloaded APK can never get, so the system picker throws `SecurityException`.
+
+This resource patch sets `android:supportsAmbientMode="false"`, matching the
+legacy port's `values-v29` behaviour.
 
 #### Unlock + pause (`Unlock Earth Super Wallpaper`)
 

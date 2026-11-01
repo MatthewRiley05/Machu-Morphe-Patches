@@ -40,6 +40,7 @@ private const val AOD_UTILS =
     "Lcom/miui/miwallpaper/baselib/utils/AodUtils;"
 private const val MIUI_USER_HANDLE = "Lmiui/os/UserHandle;"
 internal const val MIUI_BUILD = "Lmiui/os/Build;"
+private const val MIUI_SETTINGS_SYSTEM = "Landroid/provider/MiuiSettings\$System;"
 private const val CONTEXT = "Landroid/content/Context;"
 
 private val ON_RECEIVE_PARAMETERS = listOf(
@@ -379,6 +380,25 @@ internal object IsAodUsingSuperWallpaperStyleFingerprint : Fingerprint(
     name = "isAodUsingSuperWallpaperStyle",
     returnType = "Z",
     parameters = listOf(CONTEXT),
+)
+
+/**
+ * `UIDarkModeHelper$1.onChange()` reads `android.provider.MiuiSettings.System`,
+ * which does not exist on AOSP and kills the wallpaper service during
+ * `UIDarkModeHelper` construction.
+ */
+internal object DarkModeMiuiSettingsFingerprint : Fingerprint(
+    superclass = "Landroid/database/ContentObserver;",
+    name = "onChange",
+    returnType = "V",
+    parameters = listOf("Z"),
+    filters = listOf(
+        methodCall(
+            definingClass = MIUI_SETTINGS_SYSTEM,
+            name = "getBoolean",
+            returnType = "Z",
+        ),
+    ),
 )
 
 /**
