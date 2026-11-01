@@ -1,3 +1,9 @@
+## [1.1.0-dev.13](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.12...v1.1.0-dev.13) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** isolate positions and release preview player ([fdad87d](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/fdad87dda88d64e5b1a45983cfc1801a56dc6311))
+
 ## [1.1.0-dev.12](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.11...v1.1.0-dev.12) (2026-11-01)
 
 ### 🐛 Bug Fixes

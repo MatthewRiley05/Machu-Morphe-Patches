@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.1.0-dev.12",
+  "version": "1.1.0-dev.13",
   "patches": [
     {
       "name": "Delay screen-off zoom-out",
@@ -48,7 +48,7 @@
     },
     {
       "name": "Earth Super Wallpaper (AOSP)",
-      "description": "Makes the official Earth Super Wallpaper work on non-MIUI Android: removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the five desk positions, and restores the unlock animation.",
+      "description": "Makes the official Earth Super Wallpaper work on non-MIUI Android: removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the five desk positions, restores the unlock animation, and keeps picker applies stable.",
       "default": true,
       "category": null,
       "compatiblePackages": [
