@@ -1,3 +1,13 @@
+## [1.1.0-dev.4](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** move extension stub out of extensions tree ([2303dbe](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/2303dbe68a276acc700aba62c004589ee536ee64))
+
+### ✨ New Features
+
+* **earth-wallpaper:** add desk positions and consolidate into one patch ([7e85a3b](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/7e85a3bd8f8551156ee9d1d32fab0fe83169bddb))
+
 ## [1.1.0-dev.3](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2026-11-01)
 
 ### ✨ New Features
