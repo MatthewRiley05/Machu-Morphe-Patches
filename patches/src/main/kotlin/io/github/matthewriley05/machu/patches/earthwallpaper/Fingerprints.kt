@@ -9,18 +9,8 @@ import app.morphe.patcher.opcode
 import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.Opcode
 
-private const val SUPER_WALLPAPER =
-    "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaper;"
-private const val SUPER_WALLPAPER_RECEIVER =
-    "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaper\$8;"
-private const val SUPER_WALLPAPER_ENGINE =
-    "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaper\$SuperWallpaperEngine;"
-private const val DESK_RUNNABLE =
-    "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaper\$8\$1;"
-
-// The official releases since ALPHA-2.6.575 no longer render with Unity. The
-// Earth wallpaper now extends this class and renders with Filament, while the
-// old SuperWallpaper classes above remain in the APK as dead code.
+// The official builds since ALPHA-2.6.575 render with Filament. The Earth
+// wallpaper extends this class.
 internal const val BASE_EARTH_SUPER_WALLPAPER =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper;"
 
@@ -28,8 +18,7 @@ private const val DISPLAY_UTILS =
     "Lcom/miui/miwallpaper/baselib/utils/DisplayUtils;"
 private const val HANDLER = "Landroid/os/Handler;"
 
-// MIUI framework dependencies that do not exist on AOSP. The official
-// Filament builds still reference these, while the legacy port removed them.
+// MIUI framework dependencies that do not exist on AOSP.
 private const val MIUI_WALLPAPER_MANAGER =
     "Lcom/miui/miwallpaper/MiuiWallpaperManager;"
 private const val WALLPAPER_AUTHORITY_UTILS =
@@ -41,137 +30,14 @@ private const val AOD_UTILS =
 private const val MIUI_USER_HANDLE = "Lmiui/os/UserHandle;"
 internal const val MIUI_BUILD = "Lmiui/os/Build;"
 private const val MIUI_SETTINGS_SYSTEM = "Landroid/provider/MiuiSettings\$System;"
+internal const val SETTINGS_GLOBAL = "Landroid/provider/Settings\$Global;"
+private const val WEATHER_UTILS_ASYNC =
+    "Lcom/miui/miwallpaper/baselib/utils/WeatherUtils\$1;"
 private const val CONTEXT = "Landroid/content/Context;"
 
 private val ON_RECEIVE_PARAMETERS = listOf(
     "Landroid/content/Context;",
     "Landroid/content/Intent;",
-)
-
-/**
- * `getDeskPauseDelay()` returns the 5 second delay used before pausing Unity.
- */
-internal object DeskPauseDelayFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER,
-    name = "getDeskPauseDelay",
-    returnType = "I",
-    parameters = emptyList(),
-    filters = listOf(literal(5000)),
-)
-
-/**
- * `getWallPaperAod2LockPauseDelay()` returns the 5 second delay used before pausing Unity.
- */
-internal object Aod2LockPauseDelayFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER,
-    name = "getWallPaperAod2LockPauseDelay",
-    returnType = "I",
-    parameters = emptyList(),
-    filters = listOf(literal(5000)),
-)
-
-/**
- * `getWallPaperOffsetDelay()` returns the 5 second delay used before pausing Unity.
- */
-internal object WallPaperOffsetDelayFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER,
-    name = "getWallPaperOffsetDelay",
-    returnType = "I",
-    parameters = emptyList(),
-    filters = listOf(literal(5000)),
-)
-
-/**
- * `SuperWallpaper.onCreate()` registers the broadcast receiver. It registers
- * `USER_PRESENT` only when `USE_COMMAND_NOTIFICATION` is false.
- */
-internal object IntentFilterRegistrationFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER,
-    name = "onCreate",
-    returnType = "V",
-    parameters = emptyList(),
-    filters = listOf(
-        string("miui.miwallpaper.action.AOD_PREVIEW"),
-    ),
-)
-
-/**
- * The `USER_PRESENT` branch of `SuperWallpaper$8.onReceive()` returns early when
- * `access$1600()` is false.
- */
-internal object UserPresentEarlyReturnFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER_RECEIVER,
-    name = "onReceive",
-    returnType = "V",
-    parameters = ON_RECEIVE_PARAMETERS,
-    filters = listOf(
-        methodCall(
-            definingClass = SUPER_WALLPAPER,
-            name = "access\$1600",
-            returnType = "Z",
-        ),
-        opcode(Opcode.MOVE_RESULT, MatchAfterImmediately()),
-        opcode(Opcode.IF_NEZ, MatchAfterImmediately()),
-    ),
-)
-
-/**
- * `SuperWallpaper$8.onReceive()` posts the `"Desk"` Unity message with a 100 ms delay.
- */
-internal object DeskMessagePostFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER_RECEIVER,
-    name = "onReceive",
-    returnType = "V",
-    parameters = ON_RECEIVE_PARAMETERS,
-    filters = listOf(
-        string("Desk"),
-        methodCall(
-            definingClass = HANDLER,
-            name = "postDelayed",
-            returnType = "Z",
-        ),
-    ),
-)
-
-/**
- * `SuperWallpaper$8$1.run()` discards the `"Desk"` message unless the display
- * state is `DESK` (4).
- */
-internal object DisplayStateCheckFingerprint : Fingerprint(
-    definingClass = DESK_RUNNABLE,
-    name = "run",
-    returnType = "V",
-    parameters = emptyList(),
-    filters = listOf(
-        methodCall(
-            definingClass = DISPLAY_UTILS,
-            name = "getDisplayState",
-            returnType = "I",
-        ),
-        opcode(Opcode.MOVE_RESULT, MatchAfterImmediately()),
-        literal(4, location = MatchAfterImmediately()),
-        opcode(Opcode.IF_EQ, MatchAfterImmediately()),
-    ),
-)
-
-/**
- * `SuperWallpaper$SuperWallpaperEngine.goToAodState()` posts the AOD zoom-out
- * runnable immediately.
- *
- * Only used by the legacy Unity builds.
- */
-internal object AodPostFingerprint : Fingerprint(
-    definingClass = SUPER_WALLPAPER_ENGINE,
-    name = "goToAodState",
-    returnType = "V",
-    parameters = listOf("I"),
-    filters = listOf(
-        methodCall(
-            definingClass = HANDLER,
-            name = "post",
-            returnType = "Z",
-        ),
-    ),
 )
 
 // ---------------------------------------------------------------------------
@@ -247,8 +113,7 @@ internal object FilamentDeskMessagePostFingerprint : Fingerprint(
  * the display state is `DESK` (4).
  *
  * The runnable is also an anonymous class. It is matched by `Runnable` and by
- * the Filament message it sends, so the unused legacy Unity runnable in the
- * same APK cannot be matched instead.
+ * the Filament message it sends.
  */
 internal object FilamentDisplayStateCheckFingerprint : Fingerprint(
     interfaces = listOf("Ljava/lang/Runnable;"),
@@ -297,7 +162,7 @@ internal object MiuiUserHandleFingerprint : Fingerprint(
 
 /**
  * `WallpaperAuthorityUtils.<clinit>` reads `miui.os.Build.IS_INTERNATIONAL_BUILD`,
- * which crashes on AOSP. The port hard-codes the non-international default.
+ * which crashes on AOSP. Use the non-international default.
  */
 internal object IsInternationalBuildFingerprint : Fingerprint(
     definingClass = WALLPAPER_AUTHORITY_UTILS,
@@ -315,7 +180,7 @@ internal object IsInternationalBuildFingerprint : Fingerprint(
 
 /**
  * `CommonUtils.getScreenSize()` reads `miui.os.Build.IS_TABLET`, which crashes
- * on AOSP. The port treats non-MIUI devices as phones.
+ * on AOSP. Treat non-MIUI devices as phones.
  */
 internal object IsTabletFingerprint : Fingerprint(
     definingClass = COMMON_UTILS,
@@ -351,7 +216,7 @@ internal object MiuiWallpaperManagerIsTabletFingerprint : Fingerprint(
 
 /**
  * The official method calls `isVideo24Wallpaper()`, which reaches
- * `miui.os.Build.DEVICE`. The port always reports a theme lock live wallpaper.
+ * `miui.os.Build.DEVICE`. Return true to avoid that path.
  */
 internal object IsThemeLockLiveWallpaperFingerprint : Fingerprint(
     definingClass = WALLPAPER_AUTHORITY_UTILS,
@@ -410,4 +275,20 @@ internal object SupportVideo24WallpaperFingerprint : Fingerprint(
     name = "supportVideo24Wallpaper",
     returnType = "Z",
     parameters = emptyList(),
+)
+
+// ---------------------------------------------------------------------------
+// Weather/day-night settings
+// ---------------------------------------------------------------------------
+
+/**
+ * `WeatherUtils$1.onPostExecute()` writes sunrise/sunset values to
+ * `Settings.Global`, which throws `SecurityException` without the
+ * signature-only `WRITE_SECURE_SETTINGS` permission.
+ */
+internal object WeatherSettingsWritesFingerprint : Fingerprint(
+    definingClass = WEATHER_UTILS_ASYNC,
+    name = "onPostExecute",
+    returnType = "V",
+    parameters = listOf("Landroid/util/Pair;"),
 )

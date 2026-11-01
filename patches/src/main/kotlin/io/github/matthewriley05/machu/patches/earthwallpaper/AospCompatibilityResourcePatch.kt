@@ -10,8 +10,7 @@ import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBI
  * signature/privileged permission a sideloaded APK can never get. The result
  * is a `SecurityException` in the system wallpaper picker.
  *
- * The legacy port avoided this by resolving `supportsAmbientMode` to `false`
- * on Android 10+. Match that behaviour.
+ * Setting `supportsAmbientMode` to `false` avoids that check.
  */
 @Suppress("unused")
 val earthSuperWallpaperAospAmbientResourcePatch = resourcePatch(
