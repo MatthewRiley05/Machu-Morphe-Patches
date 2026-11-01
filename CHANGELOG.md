@@ -1,3 +1,10 @@
+## [1.1.0-dev.11](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.10...v1.1.0-dev.11) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** correct AOD helper descriptor ([2b4edca](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/2b4edcacfe0813c49ffc030962c77e5d4a1e0874))
+* **earth-wallpaper:** delimit the AOD helper descriptor ([d3c089b](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/d3c089bde806f1da0279788adb328b5df55a2a02))
+
 ## [1.1.0-dev.10](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.9...v1.1.0-dev.10) (2026-11-01)
 
 ### 🐛 Bug Fixes
