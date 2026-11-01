@@ -235,8 +235,10 @@ val earthSuperWallpaperPatch = bytecodePatch(
             ?: throw PatchException("Failed to match $FilamentDeskMessagePostFingerprint")
 
         val deskMessageCall = deskMessageMatch.instructionMatches.last()
+        // invoke-virtual lists the receiver first: C = Handler, D = Runnable,
+        // E and F = the long delay.
         val delayRegister =
-            deskMessageCall.getInstruction<FiveRegisterInstruction>().registerD
+            deskMessageCall.getInstruction<FiveRegisterInstruction>().registerE
 
         deskMessageMatch.method.addInstruction(
             deskMessageCall.index,
