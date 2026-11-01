@@ -87,8 +87,9 @@ Two separate problems:
 
 ### What the patch changes
 
-There is one patch: **Earth Super Wallpaper (AOSP)**. It applies all of the
-changes below. The manifest and XML additions are handled by a hidden resource
+There is one main patch, **Earth Super Wallpaper (AOSP)**, plus an optional
+**Delay screen-off zoom-out** patch. The main patch applies all of the changes
+below. The manifest and XML additions are handled by a hidden resource
 dependency, so they do not appear as separate patches.
 
 #### AOSP compatibility
@@ -150,6 +151,13 @@ four position services so the AOSP picker shows all five Earth positions:
 
 The hard-coded 2 s pause on screen-off and the visibility path are untouched, so
 the scene still stops when the display is off or the wallpaper is hidden.
+
+#### Optional: Delay screen-off zoom-out
+
+Some devices, including Pixel phones, play a closing animation when the screen
+turns off. This optional patch delays the AOD zoom-out by 500 ms so that
+animation can finish before the wallpaper starts transitioning. It is **off by
+default** and can be enabled separately in Morphe.
 
 ### Notes / limitations
 

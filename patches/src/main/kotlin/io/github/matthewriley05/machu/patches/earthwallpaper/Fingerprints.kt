@@ -13,6 +13,8 @@ import com.android.tools.smali.dexlib2.Opcode
 // wallpaper extends this class.
 internal const val BASE_EARTH_SUPER_WALLPAPER =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper;"
+internal const val BASE_EARTH_ENGINE =
+    "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper\$SuperWallpaperEngine;"
 
 private const val DISPLAY_UTILS =
     "Lcom/miui/miwallpaper/baselib/utils/DisplayUtils;"
@@ -333,4 +335,32 @@ internal object SuperWallpaperHomePositionFingerprint : Fingerprint(
     name = "getSuperWallpaperHomePosition",
     returnType = "I",
     parameters = listOf(CONTEXT, "Ljava/lang/String;"),
+)
+
+/**
+ * `BaseEarthSuperWallpaper$SuperWallpaperEngine.goToAodState()` performs the
+ * screen-off AOD zoom-out.
+ */
+internal object AodStateMethodFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "goToAodState",
+    returnType = "V",
+    parameters = listOf("I"),
+)
+
+/**
+ * `onGoingToSleep()` calls `goToAodState()` synchronously on screen-off.
+ */
+internal object AodStateCallFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onGoingToSleep",
+    returnType = "V",
+    parameters = emptyList(),
+    filters = listOf(
+        methodCall(
+            definingClass = BASE_EARTH_ENGINE,
+            name = "goToAodState",
+            returnType = "V",
+        ),
+    ),
 )
