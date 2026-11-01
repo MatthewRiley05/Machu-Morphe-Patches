@@ -21,9 +21,9 @@ Add this repository as a patch source in Morphe Manager:
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.0-dev.6](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+> **[v1.1.0-dev.7](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
 <details open>
-<summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
 **Package name:** `com.miui.miwallpaper.earth`
@@ -35,6 +35,7 @@ Add this repository as a patch source in Morphe Manager:
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Delay screen-off zoom-out](#delay-screen-off-zoom-out) | Delays the AOD zoom-out by 500 ms on screen-off so the device's closing animation can finish first. |  |
 | [Earth Super Wallpaper (AOSP)](#earth-super-wallpaper-aosp) | Makes the official Earth Super Wallpaper work on non-MIUI Android: removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the five desk positions, and restores the unlock animation. |  |
 
 </details>
