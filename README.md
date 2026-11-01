@@ -43,9 +43,10 @@ Add this repository as a patch source in Morphe Manager:
 
 ## 🌎 Earth Super Wallpaper – AOSP unlock + idle animation
 
-Unofficial patch for `com.miui.miwallpaper.earth` that restores the
-lock → home transition and keeps the wallpaper animating on AOSP-based ROMs
-(Pixel, Android 14–17).
+Unofficial patches for `com.miui.miwallpaper.earth` that restore the
+lock → home transition and keep the wallpaper animating on AOSP-based ROMs
+(Pixel, Android 14–17). The official Filament build also needs an AOSP
+compatibility patch to remove its MIUI-only framework calls.
 
 **Tested on:** Pixel 10 Pro XL, Android 17, with the base APK below.
 
@@ -56,14 +57,24 @@ lock → home transition and keeps the wallpaper animating on AOSP-based ROMs
 
 ### Base APK
 
-The latest APK this patch was built and tested against is
+The preferred base is the **official Xiaomi release**
+`ALPHA-2.6.575-09041449-ogl-64` (`versionCode 206000575`, package
+`com.miui.miwallpaper.earth`). The patch also still supports the older
 **SuperWallpaperEarth (Ouxyl's port)** `ALPHA-2.6.561-11211547-ogl-64-fix1`
-(`versionCode 206000561`, package `com.miui.miwallpaper.earth`). The copy used
-here was signed with an AppPorts certificate.
+(`versionCode 206000561`) that the first release was built against.
 
 Other ports/versions may work, but the smali context must match. If Morphe
 reports a failed fingerprint, the smali has changed and the patch needs
 updating.
+
+> [!TIP]
+> Prefer the official release. The Ouxyl port is about 110 MB larger because it
+> ships the whole **Unity** runtime (`libunity.so`, `libil2cpp.so`, Mono and
+> ~190 MB of `assets/bin/Data`). Official builds since `ALPHA-2.6.575` render
+> with Google's **Filament** engine instead (`libfilament-*.so`,
+> `libgltfio-jni.so` and `assets/textures/*.ktx`), which is smaller and is the
+> code Xiaomi actually maintains.
+
 
 ### Symptom
 
@@ -73,6 +84,20 @@ updating.
    freezes; touching or swiping starts it again for a few seconds.
 
 ### Root cause
+
+Two separate problems affect both engines:
+
+1. The app schedules a pause message 4–5 seconds after unlock and after every
+   wallpaper offset change. On the Unity build this is `MSG_UNITY_PAUSE` →
+   `UnityPlayer.pause()`; on the Filament build it is `MSG_Filament_PAUSE` →
+   `EarthMrePlayer.pause()`. The scene freezes until the launcher sends another
+   offset change.
+2. After unlock the receiver only forwards the `"Desk"` event when
+   `DisplayUtils.getDisplayState() == DESK` (4). During the AOSP unlock
+   transition the display state can still be something else, so the event is
+   discarded and the lock → home animation never runs.
+
+#### Legacy Unity port only
 
 On Android 14+ the app disables its old broadcast-based screen/unlock handling:
 
@@ -96,14 +121,47 @@ android.permission.SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE
 
 which is `signature|module|role` — a sideloaded APK can never get it, and
 `adb shell pm grant` refuses it. The unlock event is silently dropped, so the
-Unity `"Desk"` message is never sent.
+`"Desk"` message is never sent.
 
-Separately, the app schedules `MSG_UNITY_PAUSE` five seconds after unlock and
-after every wallpaper offset change. `unityPause()` calls
-`UnityPlayer.pause()`, so the scene freezes until the launcher sends another
-offset change (which calls `unityResume()`).
+The official Filament build (`ALPHA-2.6.575+`) already registers
+`ACTION_USER_PRESENT` unconditionally and no longer has that early return, so
+only the two problems above need patching there.
 
 ### What the patch changes
+
+There are two patches for the official build: **AOSP compatibility** (required
+on non-MIUI ROMs) and **Unlock Earth Super Wallpaper**. The legacy Unity port
+only needs the unlock patch because its AOSP fixes are already baked in.
+
+#### AOSP compatibility (`Make Earth Super Wallpaper work on AOSP`)
+
+The official 2.6.575 build still calls MIUI framework classes that do not exist
+on AOSP. Without this patch the preview is blank and selecting the wallpaper
+leaves the previous wallpaper in place, because the wallpaper service crashes
+while loading `MiuiWallpaperManager`.
+
+| #   | Target                                                | Change                                                                                                              |
+| --- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 1   | `MiuiWallpaperManager.<clinit>`                       | `miui.os.UserHandle.myUserId()` → `android.os.UserHandle.myUserId()`.                                               |
+| 2   | `WallpaperAuthorityUtils.<clinit>`                    | Replace the `miui.os.Build.IS_INTERNATIONAL_BUILD` read with `false`.                                               |
+| 3   | `CommonUtils.getScreenSize()`                         | Replace the `miui.os.Build.IS_TABLET` read with `false`.                                                            |
+| 4   | `MiuiWallpaperManager.getFitScreenWallpaperPreview()` | Replace its `miui.os.Build.IS_TABLET` read with `false`.                                                            |
+| 5   | `WallpaperAuthorityUtils.isThemeLockLiveWallpaper()`  | Return `true` instead of reaching `miui.os.Build.DEVICE` through `isVideo24Wallpaper()`.                            |
+| 6   | `AodUtils.isAodOpened()`                              | Return `true` instead of reading MIUI's AOD setting.                                                                |
+| 7   | `AodUtils.isAodUsingSuperWallpaperStyle()`            | Return `true` instead of reading MIUI's `aod_using_super_wallpaper` setting.                                        |
+| 8   | `WallpaperAuthorityUtils.supportVideo24Wallpaper()`   | Replace its `miui.os.Build.DEVICE` reads with empty strings so no MIUI type remains.                                |
+
+#### Unlock + pause (`Unlock Earth Super Wallpaper`)
+
+##### Official Filament build (`BaseEarthSuperWallpaper`)
+
+| #   | Target                                                    | Change                                                                                                  |
+| --- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | `BaseEarthSuperWallpaper.smali`                           | Raise `getDeskPauseDelay()` / `getWallPaperAod2LockPauseDelay()` from 5000 ms and `getWallPaperOffsetDelay()` from 4000 ms to `0x7fffffff`, so the renderer is not paused while visible. |
+| 2   | `BaseEarthSuperWallpaper$8$1.smali`                       | Drop the `DisplayUtils.getDisplayState() == DESK` check that could discard the unlock during animation. |
+| 3   | `BaseEarthSuperWallpaper$8.smali`                         | Post `"Desk"` with 0 ms instead of 100 ms.                                                              |
+
+##### Legacy Unity port (`SuperWallpaper`)
 
 | #   | Target                                                  | Change                                                                                                  |
 | --- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -112,10 +170,33 @@ offset change (which calls `unityResume()`).
 | 3   | `SuperWallpaper$8$1.smali`                              | Drop the `DisplayUtils.getDisplayState() == DESK` check that could discard the unlock during animation. |
 | 4   | `SuperWallpaper$8.smali`                                | Post `"Desk"` with 0 ms instead of 100 ms.                                                              |
 | 5   | `SuperWallpaper$SuperWallpaperEngine.smali`             | Delay the AOD zoom-out by 500 ms so it does not run during the display fade.                            |
-| 6   | `SuperWallpaper.smali`                                  | Raise the three pause delays from 5000 ms to `0x7fffffff` so Unity is not paused while visible.         |
+| 6   | `SuperWallpaper.smali`                                  | Raise the three pause delays from 5000 ms to `0x7fffffff` so the renderer is not paused while visible.  |
 
 The hard-coded 2 s pause on screen-off and the visibility path are untouched, so
 the scene still stops when the display is off or the wallpaper is hidden.
+
+### Port-only AOSP changes not part of these patches
+
+Patch A covers the MIUI framework stubs needed to make the wallpaper service
+start and render on AOSP. The Ouxyl port also contained a few extras that are
+not required for the core fix but may matter in specific situations:
+
+- `PreferenceUtils` replaces the official app's unguarded
+  `Settings.Global.putLong/putInt` writes in `WeatherUtils$1` (sunrise, sunset
+  and `sunrise_update`) and the matching reads in `UIDarkModeHelper` with plain
+  `SharedPreferences`. On a sideloaded AOSP build the official writes can throw
+  `SecurityException` because `WRITE_SECURE_SETTINGS` is a signature/privileged
+  permission. If the wallpaper process dies during a weather or day/night
+  update, this is the next thing to patch.
+- `PreviewManager` blocks more than one simultaneous wallpaper preview. The
+  official 2.6.575 build has a redesigned preview flow, so it may not be needed.
+- The port exposed five services (`EarthSuperWallpaper1..4` plus
+  `super_wallpaper1..4.xml`) because the AOSP picker cannot interpret MIUI's
+  `desk_position_count` metadata. The official build works with its single
+  service, but positions 1–4 are not selectable from the AOSP picker without a
+  separate resource patch.
+
+None of these are required for the unlock/pause fixes above.
 
 ### Notes / limitations
 
@@ -125,9 +206,15 @@ the scene still stops when the display is off or the wallpaper is hidden.
   wallpaper transition sooner.
 - Raising the pause delays means the scene keeps rendering while the wallpaper
   is visible. Screen-off and hidden-wallpaper paths still pause.
+- The legacy Unity build also delays the AOD zoom-out by 500 ms. The Filament
+  build sends the AOD message synchronously and has no equivalent `Handler.post`
+  to retime, so that tweak is intentionally not applied there. If the AOD
+  zoom-out still overlaps the display fade on the official build, it needs a
+  dedicated hook.
 - No version bump is included in the patch.
 - This patch was generated using AI as I don't specialize in this type of
-  programming. However, it is tested on my personal device.
+  programming. The legacy Unity path is tested on my personal device; the new
+  official Filament path still needs on-device testing.
 
 ## 🛠️ Building locally
 
