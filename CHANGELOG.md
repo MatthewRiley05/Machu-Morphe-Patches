@@ -1,3 +1,9 @@
+## [1.1.0-dev.6](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.5...v1.1.0-dev.6) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** correct position lookup and unlock bypass ([144eae0](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/144eae0aecfdf8acebab5484c6b029f0d0644aa1))
+
 ## [1.1.0-dev.5](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2026-11-01)
 
 ### 🐛 Bug Fixes
