@@ -15,7 +15,6 @@ internal const val BASE_EARTH_SUPER_WALLPAPER =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper;"
 internal const val BASE_EARTH_ENGINE =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper\$SuperWallpaperEngine;"
-internal const val EARTH_MRE_PLAYER = "Lcom/miui/mrengine/EarthMrePlayer;"
 
 private const val DISPLAY_UTILS =
     "Lcom/miui/miwallpaper/baselib/utils/DisplayUtils;"
@@ -350,22 +349,75 @@ internal object AodStateMethodFingerprint : Fingerprint(
 )
 
 /**
- * `BaseEarthSuperWallpaper$SuperWallpaperEngine.onCreate()` allocates the
- * Filament player. The preview engine and the applied wallpaper engine share
- * one service instance, so the previous player must be released first.
+ * `BaseEarthSuperWallpaper$SuperWallpaperEngine.onCreate()` initializes the
+ * Filament player. Preview engines are disabled so they can never compete with
+ * the applied wallpaper engine for the shared service state.
  */
 internal object EngineCreateFingerprint : Fingerprint(
     definingClass = BASE_EARTH_ENGINE,
     name = "onCreate",
     returnType = "V",
     parameters = listOf("Landroid/view/SurfaceHolder;"),
-    filters = listOf(
-        methodCall(
-            definingClass = EARTH_MRE_PLAYER,
-            name = "<init>",
-            returnType = "V",
-        ),
+)
+
+/**
+ * Preview engine callbacks are skipped to avoid touching a player that was
+ * never created for the preview.
+ */
+internal object EngineOnCommandFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onCommand",
+    returnType = "Landroid/os/Bundle;",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "Landroid/os/Bundle;",
+        "Z",
     ),
+)
+
+internal object EngineOnVisibilityChangedFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onVisibilityChanged",
+    returnType = "V",
+    parameters = listOf("Z"),
+)
+
+internal object EngineOnOffsetsChangedFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onOffsetsChanged",
+    returnType = "V",
+    parameters = listOf("F", "F", "F", "F", "I", "I"),
+)
+
+internal object EngineOnAmbientModeChangedFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onAmbientModeChanged",
+    returnType = "V",
+    parameters = listOf("Z", "J"),
+)
+
+internal object EngineOnTouchEventFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onTouchEvent",
+    returnType = "V",
+    parameters = listOf("Landroid/view/MotionEvent;"),
+)
+
+internal object EngineOnSurfaceCreatedFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onSurfaceCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/SurfaceHolder;"),
+)
+
+internal object EngineOnSurfaceChangedFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onSurfaceChanged",
+    returnType = "V",
+    parameters = listOf("Landroid/view/SurfaceHolder;", "I", "I", "I"),
 )
 
 /**

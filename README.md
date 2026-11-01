@@ -151,15 +151,13 @@ four position services so the AOSP picker shows all five Earth positions:
 #### Picker apply / preview handoff
 
 Applying a live wallpaper from the picker first creates a preview engine and
-then the applied engine in the same wallpaper service. The preview engine and
-the applied engine would otherwise share one `EarthMrePlayer` field, and the
-preview player would keep rendering into a destroyed surface. The Filament
-native engine then aborts, which makes the apply silently fail or fall back to
-another wallpaper.
+then the applied engine in the same wallpaper service. The preview and applied
+engines share one `EarthMrePlayer` field, and creating a preview player would
+replace the applied player (or vice versa) while Filament is still rendering.
 
-The patch isolates each position in its own process and releases the previous
-player before the applied engine creates its own. If an existing applied
-wallpaper is previewed again, the preview does not replace its player.
+The patch makes preview engines skip Filament entirely, so the applied engine
+is the only one using the shared service state. The picker's live preview can
+be black, but applying the wallpaper is reliable.
 
 #### Unlock + pause
 

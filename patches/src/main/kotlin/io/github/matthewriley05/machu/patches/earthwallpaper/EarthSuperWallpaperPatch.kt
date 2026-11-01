@@ -16,7 +16,6 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
-import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBILITY_EARTH_SUPER_WALLPAPER
 
 private const val EARTH_POSITION_CLASS =
@@ -161,53 +160,66 @@ val earthSuperWallpaperPatch = bytecodePatch(
         }
 
         // ------------------------------------------------------------------
-        // Preview -> applied wallpaper handoff.
+        // Preview engines: skip Filament entirely.
         // ------------------------------------------------------------------
 
-        // The picker previews a live wallpaper with the same service component
-        // it later applies, so the preview engine and the applied engine share
-        // one BaseEarthSuperWallpaper instance and one earthMrePlayer field.
-        // Release the preview player before allocating the applied one, and
-        // never let a preview replace an already running applied player.
+        // The system previews a live wallpaper with the same service component
+        // it later applies. The preview and applied engines then share one
+        // WallpaperService instance and one EarthMrePlayer field, so a preview
+        // player would be replaced (or would replace the applied player) during
+        // the handoff. Preview engines therefore never create a player; the
+        // applied engine is the only Filament user.
         val engineCreateMatch = EngineCreateFingerprint.matchOrNull()
             ?: throw PatchException("Failed to match $EngineCreateFingerprint")
 
         val engineCreateMethod = engineCreateMatch.method
-        val playerInitIndex = engineCreateMatch.instructionMatches.first().index
-        val playerNewInstanceIndex = (playerInitIndex - 1 downTo 0).firstOrNull { index ->
-            val instruction = engineCreateMethod.getInstruction(index)
-            instruction.opcode == Opcode.NEW_INSTANCE &&
-                ((instruction as? ReferenceInstruction)?.reference as? TypeReference)
-                    ?.type == EARTH_MRE_PLAYER
-        } ?: throw PatchException("Failed to find the EarthMrePlayer allocation")
+        val superIndex = engineCreateMethod.implementation!!.instructions.indexOfFirst {
+            it.opcode == Opcode.INVOKE_SUPER
+        }
 
-        val playerNewInstance = engineCreateMethod.getInstruction(playerNewInstanceIndex)
-        val createPlayerLabel = ExternalLabel("create_player", playerNewInstance)
-        val abortPreviewLabel = ExternalLabel(
-            "abort_preview_player",
-            engineCreateMethod.getInstruction(
-                engineCreateMethod.implementation!!.instructions.lastIndex,
-            ),
-        )
+        if (superIndex < 0) {
+            throw PatchException("Engine onCreate() has no super call")
+        }
+
+        val afterSuper = engineCreateMethod.getInstruction(superIndex + 1)
 
         engineCreateMethod.addInstructionsWithLabels(
-            playerNewInstanceIndex,
+            superIndex + 1,
             """
                 invoke-virtual { p0 }, $BASE_EARTH_ENGINE->isPreview()Z
-                move-result v2
-                if-nez v2, :preview_engine
-                iget-object v2, p0, $BASE_EARTH_ENGINE->this${'$'}0:$BASE_EARTH_SUPER_WALLPAPER
-                invoke-static { v2 }, Lcom/miui/miwallpaper/earth/superwallpaper/PlayerCleanup;->quitIfPresent($BASE_EARTH_SUPER_WALLPAPER)V
-                goto :create_player
-                :preview_engine
-                iget-object v2, p0, $BASE_EARTH_ENGINE->this${'$'}0:$BASE_EARTH_SUPER_WALLPAPER
-                invoke-static { v2 }, Lcom/miui/miwallpaper/earth/superwallpaper/PlayerCleanup;->hasPlayer($BASE_EARTH_SUPER_WALLPAPER)Z
-                move-result v2
-                if-eqz v2, :abort_preview_player
+                move-result v0
+                if-eqz v0, :continue_create
+                return-void
             """,
-            createPlayerLabel,
-            abortPreviewLabel,
+            ExternalLabel("continue_create", afterSuper),
         )
+
+        listOf(
+            EngineOnCommandFingerprint to "const/4 v0, 0x0\nreturn-object v0",
+            EngineOnVisibilityChangedFingerprint to "return-void",
+            EngineOnOffsetsChangedFingerprint to "return-void",
+            EngineOnAmbientModeChangedFingerprint to "return-void",
+            EngineOnTouchEventFingerprint to "return-void",
+            EngineOnSurfaceCreatedFingerprint to "return-void",
+            EngineOnSurfaceChangedFingerprint to "return-void",
+        ).forEach { (fingerprint, returnCode) ->
+            val match = fingerprint.matchOrNull()
+                ?: throw PatchException("Failed to match $fingerprint")
+
+            val method = match.method
+            val originalFirstInstruction = method.getInstruction(0)
+
+            method.addInstructionsWithLabels(
+                0,
+                """
+                    invoke-virtual { p0 }, $BASE_EARTH_ENGINE->isPreview()Z
+                    move-result v0
+                    if-eqz v0, :continue_callback
+                    $returnCode
+                """,
+                ExternalLabel("continue_callback", originalFirstInstruction),
+            )
+        }
 
         // ------------------------------------------------------------------
         // Desk positions: derive the position from the service class name.
