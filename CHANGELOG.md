@@ -1,3 +1,9 @@
+## [1.1.0-dev.9](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.8...v1.1.0-dev.9) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** cancel delayed AOD transition on wake ([a969d5e](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/a969d5e772a0577ee3a07956dcbd4086754cf192))
+
 ## [1.1.0-dev.8](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.7...v1.1.0-dev.8) (2026-11-01)
 
 ### ✨ New Features
