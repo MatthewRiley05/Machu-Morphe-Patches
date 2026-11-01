@@ -1,3 +1,9 @@
+## [1.1.0-dev.8](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.7...v1.1.0-dev.8) (2026-11-01)
+
+### ✨ New Features
+
+* **earth-wallpaper:** make screen-off zoom-out delay configurable ([d7c9e9b](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/d7c9e9b31bd392e42203afd88dd2ef7f2b68be12))
+
 ## [1.1.0-dev.7](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.6...v1.1.0-dev.7) (2026-11-01)
 
 ### ✨ New Features

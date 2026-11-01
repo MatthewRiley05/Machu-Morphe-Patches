@@ -1,10 +1,10 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.1.0-dev.7",
+  "version": "1.1.0-dev.8",
   "patches": [
     {
       "name": "Delay screen-off zoom-out",
-      "description": "Delays the AOD zoom-out by 500 ms on screen-off so the device's closing animation can finish first.",
+      "description": "Delays the AOD zoom-out on screen-off so the device's closing animation can finish first. The delay is configurable (default 500 ms).",
       "default": false,
       "category": null,
       "compatiblePackages": [
@@ -34,7 +34,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "delay_ms",
+          "title": "Zoom-out delay (ms)",
+          "description": "How long to wait before the AOD zoom-out starts when the screen turns off.",
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 500,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Earth Super Wallpaper (AOSP)",
