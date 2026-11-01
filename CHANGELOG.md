@@ -1,3 +1,15 @@
+## [2.0.0-dev.1](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.13...v2.0.0-dev.1) (2026-11-01)
+
+### ⚠ BREAKING CHANGES
+
+* the 2.6.561 Unity port and its legacy patch paths are no
+longer supported. The patches now target the official Filament build
+(ALPHA-2.6.575-09041449-ogl-64) directly.
+
+### ✨ New Features
+
+* release the official Filament build only ([eb30734](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/eb30734d3a2546e3b709a2c708e67550f0cbb64a))
+
 ## [1.1.0-dev.13](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.12...v1.1.0-dev.13) (2026-11-01)
 
 ### 🐛 Bug Fixes
