@@ -42,18 +42,13 @@ public final class PlayerCleanup {
 
     /**
      * Releases the player owned by a previous engine before the applied
-     * wallpaper engine creates its own.
+     * wallpaper engine creates its own. The field is left pointing at the old
+     * player until the new one replaces it, so it is never null in between.
      */
     public static void quitIfPresent(BaseEarthSuperWallpaper service) {
         EarthMrePlayer player = getPlayer(service);
-        if (player == null) {
-            return;
-        }
-        player.quit();
-        try {
-            PLAYER_FIELD.set(service, null);
-        } catch (Throwable ignored) {
-            // The new player overwrites the field right after this call.
+        if (player != null) {
+            player.quit();
         }
     }
 

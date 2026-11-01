@@ -195,7 +195,7 @@ val earthSuperWallpaperPatch = bytecodePatch(
             """
                 invoke-virtual { p0 }, $BASE_EARTH_ENGINE->isPreview()Z
                 move-result v2
-                if-eqz v2, :preview_engine
+                if-nez v2, :preview_engine
                 iget-object v2, p0, $BASE_EARTH_ENGINE->this${'$'}0:$BASE_EARTH_SUPER_WALLPAPER
                 invoke-static { v2 }, Lcom/miui/miwallpaper/earth/superwallpaper/PlayerCleanup;->quitIfPresent($BASE_EARTH_SUPER_WALLPAPER)V
                 goto :create_player
