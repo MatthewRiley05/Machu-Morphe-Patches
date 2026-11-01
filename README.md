@@ -161,6 +161,9 @@ finish before the wallpaper starts transitioning. The delay defaults to **500
 ms** and is configurable from **100–1000 ms** in steps of 50 ms. It is **off by
 default** and can be enabled separately in Morphe.
 
+A pending transition is cancelled when the display wakes or the wallpaper engine
+is destroyed, so a delayed AOD frame cannot appear after the device is back on.
+
 ### Notes / limitations
 
 - The unlock transition starts when SystemUI sends `ACTION_USER_PRESENT`, which
@@ -169,9 +172,8 @@ default** and can be enabled separately in Morphe.
   wallpaper transition sooner.
 - Raising the pause delays means the scene keeps rendering while the wallpaper
   is visible. Screen-off and hidden-wallpaper paths still pause.
-- The Filament build sends the AOD message synchronously, so the old AOD
-  zoom-out delay tweak has no equivalent hook. If the AOD zoom-out overlapped
-  the display fade, it would need a dedicated patch.
+- The optional zoom-out delay postpones `goToAodState()` on screen-off and
+  cancels it if the display wakes first.
 - No version bump is included in the patch.
 - This patch was generated using AI as I don't specialize in this type of
   programming. It is tested on a Pixel 10 Pro XL running Android 17.

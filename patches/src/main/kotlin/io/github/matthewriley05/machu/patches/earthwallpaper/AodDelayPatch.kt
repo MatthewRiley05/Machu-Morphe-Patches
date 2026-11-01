@@ -1,5 +1,6 @@
 package io.github.matthewriley05.machu.patches.earthwallpaper
 
+import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
@@ -7,6 +8,9 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.intSliderOption
 import com.android.tools.smali.dexlib2.AccessFlags
 import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBILITY_EARTH_SUPER_WALLPAPER
+
+private const val AOD_DELAY_HELPER =
+    "Lcom/miui/miwallpaper/earth/superwallpaper/AodDelay;"
 
 /**
  * Delays the AOD zoom-out when the screen turns off. Some devices, including
@@ -69,8 +73,21 @@ val earthSuperWallpaperAodDelayPatch = bytecodePatch(
                 invoke-static { v1 }, $BASE_EARTH_SUPER_WALLPAPER->access\$100($BASE_EARTH_SUPER_WALLPAPER)Landroid/os/Handler;
                 move-result-object v1
                 const-wide/16 v2, 0x${delay.toString(16)}
-                invoke-static { v1, p0, v0, v2, v3 }, Lcom/miui/miwallpaper/earth/superwallpaper/AodDelay;->post(Landroid/os/Handler;$BASE_EARTH_ENGINE;IJ)V
+                invoke-static { v1, p0, v0, v2, v3 }, $AOD_DELAY_HELPER->post(Landroid/os/Handler;$BASE_EARTH_ENGINE;IJ)V
             """,
         )
+
+        // The delayed transition must not run after the display wakes or after
+        // the engine is torn down. Without this, pressing the power button twice
+        // within the delay would apply the AOD frame on top of the lock screen.
+        listOf(AodWakeUpFingerprint, AodDestroyFingerprint).forEach { fingerprint ->
+            val match = fingerprint.matchOrNull()
+                ?: throw PatchException("Failed to match $fingerprint")
+
+            match.method.addInstruction(
+                0,
+                "invoke-static {}, $AOD_DELAY_HELPER->cancel()V",
+            )
+        }
     }
 }

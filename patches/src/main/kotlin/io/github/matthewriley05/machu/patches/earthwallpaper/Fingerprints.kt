@@ -364,3 +364,25 @@ internal object AodStateCallFingerprint : Fingerprint(
         ),
     ),
 )
+
+/**
+ * `onWakeUp()` runs when the display turns back on. Any pending delayed AOD
+ * transition is cancelled there so it cannot fire on an awake device.
+ */
+internal object AodWakeUpFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onWakeUp",
+    returnType = "V",
+    parameters = listOf(CONTEXT),
+)
+
+/**
+ * `onDestroy()` tears down the engine. Cancel any scheduled AOD transition so
+ * it cannot touch a released renderer.
+ */
+internal object AodDestroyFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onDestroy",
+    returnType = "V",
+    parameters = emptyList(),
+)
