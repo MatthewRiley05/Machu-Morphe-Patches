@@ -1,3 +1,9 @@
+## [2.0.0-dev.3](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v2.0.0-dev.2...v2.0.0-dev.3) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** skip Filament for picker preview engines ([e828c37](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/e828c37b9cdee42014166e33ea72c8119c2b3ac1))
+
 ## [2.0.0-dev.2](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v2.0.0-dev.1...v2.0.0-dev.2) (2026-11-01)
 
 ### 🐛 Bug Fixes
