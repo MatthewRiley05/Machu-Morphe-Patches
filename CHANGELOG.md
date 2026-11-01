@@ -1,3 +1,9 @@
+## [1.1.0-dev.10](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.9...v1.1.0-dev.10) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **earth-wallpaper:** make the screen-off delay patch apply ([5196fa5](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/5196fa576d3846f379777a43dd73f1c622612e2e))
+
 ## [1.1.0-dev.9](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.8...v1.1.0-dev.9) (2026-11-01)
 
 ### 🐛 Bug Fixes
