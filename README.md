@@ -156,8 +156,9 @@ the scene still stops when the display is off or the wallpaper is hidden.
 #### Optional: Delay screen-off zoom-out
 
 Some devices, including Pixel phones, play a closing animation when the screen
-turns off. This optional patch delays the AOD zoom-out by 500 ms so that
-animation can finish before the wallpaper starts transitioning. It is **off by
+turns off. This optional patch delays the AOD zoom-out so that animation can
+finish before the wallpaper starts transitioning. The delay defaults to **500
+ms** and is configurable from **100–1000 ms** in steps of 50 ms. It is **off by
 default** and can be enabled separately in Morphe.
 
 ### Notes / limitations

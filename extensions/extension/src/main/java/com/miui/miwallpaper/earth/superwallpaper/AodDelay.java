@@ -9,8 +9,6 @@ import android.os.Handler;
 @SuppressWarnings("unused")
 public final class AodDelay implements Runnable {
 
-    private static final long DELAY_MS = 500L;
-
     private final BaseEarthSuperWallpaper.SuperWallpaperEngine engine;
     private final int position;
 
@@ -22,9 +20,10 @@ public final class AodDelay implements Runnable {
     public static void post(
             Handler handler,
             BaseEarthSuperWallpaper.SuperWallpaperEngine engine,
-            int position
+            int position,
+            long delayMs
     ) {
-        handler.postDelayed(new AodDelay(engine, position), DELAY_MS);
+        handler.postDelayed(new AodDelay(engine, position), delayMs);
     }
 
     @Override

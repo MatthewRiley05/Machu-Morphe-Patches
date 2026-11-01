@@ -4,6 +4,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.patch.intSliderOption
 import com.android.tools.smali.dexlib2.AccessFlags
 import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBILITY_EARTH_SUPER_WALLPAPER
 
@@ -15,11 +16,21 @@ import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBI
 @Suppress("unused")
 val earthSuperWallpaperAodDelayPatch = bytecodePatch(
     name = "Delay screen-off zoom-out",
-    description = "Delays the AOD zoom-out by 500 ms on screen-off so the " +
-        "device's closing animation can finish first.",
+    description = "Delays the AOD zoom-out on screen-off so the device's closing " +
+        "animation can finish first. The delay is configurable (default 500 ms).",
     default = false,
 ) {
     compatibleWith(COMPATIBILITY_EARTH_SUPER_WALLPAPER)
+
+    val delayMs = intSliderOption(
+        key = "delay_ms",
+        title = "Zoom-out delay (ms)",
+        description = "How long to wait before the AOD zoom-out starts when the screen turns off.",
+        default = 500,
+        min = 100,
+        max = 1000,
+        step = 50,
+    )
 
     // The AodDelay helper is merged by the main patch.
     dependsOn(earthSuperWallpaperPatch)
@@ -30,6 +41,8 @@ val earthSuperWallpaperAodDelayPatch = bytecodePatch(
                 "This patch requires the official Filament build (ALPHA-2.6.575 or newer).",
             )
         }
+
+        val delay = delayMs.value ?: 500
 
         // AodDelay is in the same package, so package-private access is enough.
         val aodStateMatch = AodStateMethodFingerprint.matchOrNull()
@@ -55,7 +68,8 @@ val earthSuperWallpaperAodDelayPatch = bytecodePatch(
             """
                 invoke-static { v1 }, $BASE_EARTH_SUPER_WALLPAPER->access\$100($BASE_EARTH_SUPER_WALLPAPER)Landroid/os/Handler;
                 move-result-object v1
-                invoke-static { v1, p0, v0 }, Lcom/miui/miwallpaper/earth/superwallpaper/AodDelay;->post(Landroid/os/Handler;$BASE_EARTH_ENGINE;I)V
+                const-wide/16 v2, 0x${delay.toString(16)}
+                invoke-static { v1, p0, v0, v2, v3 }, Lcom/miui/miwallpaper/earth/superwallpaper/AodDelay;->post(Landroid/os/Handler;$BASE_EARTH_ENGINE;IJ)V
             """,
         )
     }
