@@ -21,9 +21,9 @@ Add this repository as a patch source in Morphe Manager:
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.0-dev.1](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+> **[v1.1.0-dev.2](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v1.1.0-dev.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;3 patches total
 <details open>
-<summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Package name:** `com.miui.miwallpaper.earth`
@@ -35,6 +35,7 @@ Add this repository as a patch source in Morphe Manager:
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Allow Earth Super Wallpaper on AOSP](#allow-earth-super-wallpaper-on-aosp) | Disables the ambient-mode declaration that requires the signature-only AMBIENT_WALLPAPER permission on non-MIUI ROMs. |  |
 | [Make Earth Super Wallpaper work on AOSP](#make-earth-super-wallpaper-work-on-aosp) | Replaces MIUI-only framework calls so the official Earth Super Wallpaper can be previewed, selected, and rendered on non-MIUI Android ROMs. |  |
 | [Unlock Earth Super Wallpaper](#unlock-earth-super-wallpaper) | Restores the lock-to-home unlock animation and prevents the wallpaper from pausing while it is visible on AOSP-based ROMs. |  |
 
