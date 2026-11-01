@@ -1,3 +1,9 @@
+## [1.1.0-dev.3](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2026-11-01)
+
+### ✨ New Features
+
+* **earth-wallpaper:** drop legacy port and add weather settings patch ([52a39e6](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/52a39e6b0c265937d3bec675517d22e727174b77))
+
 ## [1.1.0-dev.2](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-11-01)
 
 ### 🐛 Bug Fixes

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.1.0-dev.2",
+  "version": "1.1.0-dev.3",
   "patches": [
     {
       "name": "Allow Earth Super Wallpaper on AOSP",
@@ -25,7 +25,34 @@
               "description": null
             },
             {
-              "version": "ALPHA-2.6.561-11211547-ogl-64-fix1",
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix weather settings on AOSP",
+      "description": "Prevents the unguarded Settings.Global writes from crashing the wallpaper process during weather or day/night updates on non-MIUI ROMs.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.miui.miwallpaper.earth",
+          "name": "Earth Super Wallpaper",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#000000",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "ALPHA-2.6.575-09041449-ogl-64",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -66,13 +93,6 @@
               "description": null
             },
             {
-              "version": "ALPHA-2.6.561-11211547-ogl-64-fix1",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
               "version": null,
               "versionCodes": null,
               "isExperimental": true,
@@ -101,13 +121,6 @@
           "targets": [
             {
               "version": "ALPHA-2.6.575-09041449-ogl-64",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": "ALPHA-2.6.561-11211547-ogl-64-fix1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
