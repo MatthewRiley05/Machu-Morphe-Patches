@@ -1,32 +1,84 @@
 package io.github.matthewriley05.machu.patches.earthwallpaper
 
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.resourcePatch
-import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBILITY_EARTH_SUPER_WALLPAPER
+import org.w3c.dom.Element
 
 /**
- * The official wallpaper XML declares `android:supportsAmbientMode="true"`.
- * AOSP's `WallpaperManagerService` then requires the selected wallpaper
- * service to hold `android.permission.AMBIENT_WALLPAPER`, which is a
- * signature/privileged permission a sideloaded APK can never get. The result
- * is a `SecurityException` in the system wallpaper picker.
- *
- * Setting `supportsAmbientMode` to `false` avoids that check.
+ * Resource changes for the AOSP build. This patch is an unnamed dependency of
+ * `earthSuperWallpaperPatch`, so it is applied with the main patch but is not
+ * listed separately.
  */
 @Suppress("unused")
-val earthSuperWallpaperAospAmbientResourcePatch = resourcePatch(
-    name = "Allow Earth Super Wallpaper on AOSP",
-    description = "Disables the ambient-mode declaration that requires the " +
-        "signature-only AMBIENT_WALLPAPER permission on non-MIUI ROMs.",
-    default = true,
-) {
-    compatibleWith(COMPATIBILITY_EARTH_SUPER_WALLPAPER)
-
+internal val earthSuperWallpaperResourcePatch = resourcePatch {
     execute {
-        document("res/xml/super_wallpaper.xml").use { doc ->
-            doc.documentElement.setAttributeNS(
-                "http://schemas.android.com/apk/res/android",
+        val androidNamespace = "http://schemas.android.com/apk/res/android"
+
+        // The official metadata requests ambient mode, which makes AOSP require
+        // the signature-only AMBIENT_WALLPAPER permission.
+        document("res/xml/super_wallpaper.xml").use { document ->
+            document.documentElement.setAttributeNS(
+                androidNamespace,
                 "android:supportsAmbientMode",
                 "false",
+            )
+        }
+
+        // Expose positions 1-4 as separate services for the AOSP picker.
+        document("AndroidManifest.xml").use { document ->
+            val application = document.getElementsByTagName("application").item(0) as? Element
+                ?: throw PatchException("AndroidManifest.xml has no <application> element")
+
+            for (position in 1..4) {
+                val service = document.createElement("service").apply {
+                    setAttribute(
+                        "android:name",
+                        "com.miui.miwallpaper.earth.superwallpaper.EarthSuperWallpaper$position",
+                    )
+                    setAttribute("android:permission", "android.permission.BIND_WALLPAPER")
+                    setAttribute("android:exported", "true")
+                    setAttribute("android:label", "@string/earth_position_title_$position")
+                    setAttribute("android:process", ":earthSuperWallpaper")
+                    setAttribute("android:defaultToDeviceProtectedStorage", "true")
+                    setAttribute("android:directBootAware", "true")
+                }
+
+                service.appendChild(
+                    document.createElement("intent-filter").apply {
+                        appendChild(
+                            document.createElement("action").apply {
+                                setAttribute(
+                                    "android:name",
+                                    "android.service.wallpaper.WallpaperService",
+                                )
+                            },
+                        )
+                    },
+                )
+
+                service.appendChild(
+                    document.createElement("meta-data").apply {
+                        setAttribute("android:name", "android.service.wallpaper")
+                        setAttribute("android:resource", "@xml/super_wallpaper$position")
+                    },
+                )
+
+                application.appendChild(service)
+            }
+        }
+
+        // Position-specific wallpaper metadata. The strings and drawables
+        // already exist in the official APK.
+        for (position in 1..4) {
+            get("res/xml/super_wallpaper$position.xml", copy = false).writeText(
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <wallpaper android:description="@string/earth_position_content_$position"
+                    android:thumbnail="@drawable/home_small_preview_$position"
+                    android:showMetadataInPreview="true"
+                    android:supportsAmbientMode="false"
+                    xmlns:android="http://schemas.android.com/apk/res/android" />
+                """.trimIndent(),
             )
         }
     }

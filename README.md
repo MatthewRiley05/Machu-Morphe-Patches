@@ -90,17 +90,14 @@ Two separate problems:
 
 ### What the patch changes
 
-There are four patches:
+There is one patch: **Earth Super Wallpaper (AOSP)**. It applies all of the
+changes below. The manifest and XML additions are handled by a hidden resource
+dependency, so they do not appear as separate patches.
 
-- **Make Earth Super Wallpaper work on AOSP** — replaces MIUI-only framework calls.
-- **Allow Earth Super Wallpaper on AOSP** — disables the ambient-mode metadata that requires a signature permission.
-- **Fix weather settings on AOSP** — removes unguarded `Settings.Global` writes.
-- **Unlock Earth Super Wallpaper** — restores the lock → home animation and stops the pause.
-
-#### AOSP compatibility (`Make Earth Super Wallpaper work on AOSP`)
+#### AOSP compatibility
 
 The official 2.6.575 build still calls MIUI framework classes that do not exist
-on AOSP. Without this patch the wallpaper service crashes while loading
+on AOSP. Without these changes the wallpaper service crashes while loading
 `MiuiWallpaperManager` or `UIDarkModeHelper`.
 
 | #   | Target                                                | Change                                                                                                              |
@@ -115,7 +112,7 @@ on AOSP. Without this patch the wallpaper service crashes while loading
 | 8   | `WallpaperAuthorityUtils.supportVideo24Wallpaper()`   | Replace its `miui.os.Build.DEVICE` reads with empty strings so no MIUI type remains.                                |
 | 9   | `UIDarkModeHelper$1.onChange()`                       | Return `false` instead of calling `android.provider.MiuiSettings$System.getBoolean()`.                              |
 
-#### AOSP ambient-mode metadata (`Allow Earth Super Wallpaper on AOSP`)
+#### AOSP ambient-mode metadata
 
 The official `res/xml/super_wallpaper.xml` hard-codes
 `android:supportsAmbientMode="true"`. AOSP's `WallpaperManagerService` then
@@ -123,18 +120,30 @@ requires the selected wallpaper service to hold
 `android.permission.AMBIENT_WALLPAPER`, a signature/privileged permission a
 sideloaded APK can never get, so the system picker throws `SecurityException`.
 
-This resource patch sets `android:supportsAmbientMode="false"`, which avoids
-that permission check.
+The patch sets `android:supportsAmbientMode="false"`, which avoids that
+permission check.
 
-#### Weather settings (`Fix weather settings on AOSP`)
+#### Weather settings
 
 `WeatherUtils$1.onPostExecute()` writes sunrise, sunset and `sunrise_update` to
 `Settings.Global` without a permission check. On AOSP that throws
 `SecurityException` because `WRITE_SECURE_SETTINGS` is signature/privileged.
-This patch removes those writes; the fetched values are still passed directly to
+The patch removes those writes; the fetched values are still passed directly to
 the renderer for the current session.
 
-#### Unlock + pause (`Unlock Earth Super Wallpaper`)
+#### Desk positions
+
+The official APK exposes one Earth entry plus a preview entry. The patch adds
+four position services so the AOSP picker shows all five Earth positions:
+
+| #   | Change                                                                                                                    |
+| --- | ------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Adds `EarthSuperWallpaper1..4` service classes through the extension DEX.                                                  |
+| 2   | Adds four `res/xml/super_wallpaper1..4.xml` metadata files using the position strings and thumbnails already in the APK.    |
+| 3   | Adds four `<service>` entries to `AndroidManifest.xml`.                                                                    |
+| 4   | Patches `SuperWallpaperUtils.getSuperWallpaperHomePosition()` to derive the position from the service class name, avoiding MIUI `Settings.Secure`. |
+
+#### Unlock + pause
 
 | #   | Target                                                    | Change                                                                                                  |
 | --- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -156,9 +165,9 @@ the scene still stops when the display is off or the wallpaper is hidden.
 - The Filament build sends the AOD message synchronously, so the old AOD
   zoom-out delay tweak has no equivalent hook. If the AOD zoom-out overlapped
   the display fade, it would need a dedicated patch.
-- No version bump is included in the patches.
-- These patches were generated using AI as I don't specialize in this type of
-  programming. They are tested on a Pixel 10 Pro XL running Android 17.
+- No version bump is included in the patch.
+- This patch was generated using AI as I don't specialize in this type of
+  programming. It is tested on a Pixel 10 Pro XL running Android 17.
 
 ## 🛠️ Building locally
 

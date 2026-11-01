@@ -33,6 +33,8 @@ private const val MIUI_SETTINGS_SYSTEM = "Landroid/provider/MiuiSettings\$System
 internal const val SETTINGS_GLOBAL = "Landroid/provider/Settings\$Global;"
 private const val WEATHER_UTILS_ASYNC =
     "Lcom/miui/miwallpaper/baselib/utils/WeatherUtils\$1;"
+private const val SUPER_WALLPAPER_UTILS =
+    "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaperUtils;"
 private const val CONTEXT = "Landroid/content/Context;"
 
 private val ON_RECEIVE_PARAMETERS = listOf(
@@ -291,4 +293,16 @@ internal object WeatherSettingsWritesFingerprint : Fingerprint(
     name = "onPostExecute",
     returnType = "V",
     parameters = listOf("Landroid/util/Pair;"),
+)
+
+/**
+ * `SuperWallpaperUtils.getSuperWallpaperHomePosition()` reads the desk position
+ * from MIUI `Settings.Secure`. The position services derive their position from
+ * the service class name instead.
+ */
+internal object SuperWallpaperHomePositionFingerprint : Fingerprint(
+    definingClass = SUPER_WALLPAPER_UTILS,
+    name = "getSuperWallpaperHomePosition",
+    returnType = "I",
+    parameters = listOf(CONTEXT, "Ljava/lang/String;"),
 )
