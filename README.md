@@ -139,8 +139,21 @@ four position services so the AOSP picker shows all five Earth positions:
 | --- | ------------------------------------------------------------------------------------------------------------------------- |
 | 1   | Adds `EarthSuperWallpaper1..4` service classes through the extension DEX.                                                  |
 | 2   | Adds four `res/xml/super_wallpaper1..4.xml` metadata files using the position strings and thumbnails already in the APK.    |
-| 3   | Adds four `<service>` entries to `AndroidManifest.xml`.                                                                    |
+| 3   | Adds four `<service>` entries to `AndroidManifest.xml`, each in its own process (`:earthSuperWallpaper1`–`:earthSuperWallpaper4`). |
 | 4   | Patches `SuperWallpaperUtils.getSuperWallpaperHomePosition()` to derive the position from the service class name, avoiding MIUI `Settings.Secure`. |
+
+#### Picker apply / preview handoff
+
+Applying a live wallpaper from the picker first creates a preview engine and
+then the applied engine in the same wallpaper service. The preview engine and
+the applied engine would otherwise share one `EarthMrePlayer` field, and the
+preview player would keep rendering into a destroyed surface. The Filament
+native engine then aborts, which makes the apply silently fail or fall back to
+another wallpaper.
+
+The patch isolates each position in its own process and releases the previous
+player before the applied engine creates its own. If an existing applied
+wallpaper is previewed again, the preview does not replace its player.
 
 #### Unlock + pause
 

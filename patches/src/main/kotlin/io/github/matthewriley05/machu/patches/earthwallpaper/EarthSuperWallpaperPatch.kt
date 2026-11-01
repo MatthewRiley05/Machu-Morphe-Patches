@@ -9,12 +9,14 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 import app.morphe.patcher.util.smali.ExternalLabel
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import io.github.matthewriley05.machu.patches.earthwallpaper.Constants.COMPATIBILITY_EARTH_SUPER_WALLPAPER
 
 private const val EARTH_POSITION_CLASS =
@@ -25,7 +27,7 @@ val earthSuperWallpaperPatch = bytecodePatch(
     name = "Earth Super Wallpaper (AOSP)",
     description = "Makes the official Earth Super Wallpaper work on non-MIUI Android: " +
         "removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the " +
-        "five desk positions, and restores the unlock animation.",
+        "five desk positions, restores the unlock animation, and keeps picker applies stable.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_EARTH_SUPER_WALLPAPER)
@@ -157,6 +159,55 @@ val earthSuperWallpaperPatch = bytecodePatch(
                     "update the weather-settings patch.",
             )
         }
+
+        // ------------------------------------------------------------------
+        // Preview -> applied wallpaper handoff.
+        // ------------------------------------------------------------------
+
+        // The picker previews a live wallpaper with the same service component
+        // it later applies, so the preview engine and the applied engine share
+        // one BaseEarthSuperWallpaper instance and one earthMrePlayer field.
+        // Release the preview player before allocating the applied one, and
+        // never let a preview replace an already running applied player.
+        val engineCreateMatch = EngineCreateFingerprint.matchOrNull()
+            ?: throw PatchException("Failed to match $EngineCreateFingerprint")
+
+        val engineCreateMethod = engineCreateMatch.method
+        val playerInitIndex = engineCreateMatch.instructionMatches.first().index
+        val playerNewInstanceIndex = (playerInitIndex - 1 downTo 0).firstOrNull { index ->
+            val instruction = engineCreateMethod.getInstruction(index)
+            instruction.opcode == Opcode.NEW_INSTANCE &&
+                ((instruction as? ReferenceInstruction)?.reference as? TypeReference)
+                    ?.type == EARTH_MRE_PLAYER
+        } ?: throw PatchException("Failed to find the EarthMrePlayer allocation")
+
+        val playerNewInstance = engineCreateMethod.getInstruction(playerNewInstanceIndex)
+        val createPlayerLabel = ExternalLabel("create_player", playerNewInstance)
+        val abortPreviewLabel = ExternalLabel(
+            "abort_preview_player",
+            engineCreateMethod.getInstruction(
+                engineCreateMethod.implementation!!.instructions.lastIndex,
+            ),
+        )
+
+        engineCreateMethod.addInstructionsWithLabels(
+            playerNewInstanceIndex,
+            """
+                invoke-virtual { p0 }, $BASE_EARTH_ENGINE->isPreview()Z
+                move-result v2
+                if-eqz v2, :preview_engine
+                iget-object v2, p0, $BASE_EARTH_ENGINE->this${'$'}0:$BASE_EARTH_SUPER_WALLPAPER
+                invoke-static { v2 }, Lcom/miui/miwallpaper/earth/superwallpaper/PlayerCleanup;->quitIfPresent($BASE_EARTH_SUPER_WALLPAPER)V
+                goto :create_player
+                :preview_engine
+                iget-object v2, p0, $BASE_EARTH_ENGINE->this${'$'}0:$BASE_EARTH_SUPER_WALLPAPER
+                invoke-static { v2 }, Lcom/miui/miwallpaper/earth/superwallpaper/PlayerCleanup;->hasPlayer($BASE_EARTH_SUPER_WALLPAPER)Z
+                move-result v2
+                if-eqz v2, :abort_preview_player
+            """,
+            createPlayerLabel,
+            abortPreviewLabel,
+        )
 
         // ------------------------------------------------------------------
         // Desk positions: derive the position from the service class name.

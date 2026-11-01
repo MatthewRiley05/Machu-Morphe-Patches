@@ -59,7 +59,10 @@ internal val earthSuperWallpaperResourcePatch = resourcePatch {
                     setAttribute("android:permission", "android.permission.BIND_WALLPAPER")
                     setAttribute("android:exported", "true")
                     setAttribute("android:label", "@string/earth_position_title_$position")
-                    setAttribute("android:process", ":earthSuperWallpaper")
+                    // Each position gets its own process so the Filament native
+                    // state of the previous wallpaper can never overlap the new
+                    // one during a picker apply.
+                    setAttribute("android:process", ":earthSuperWallpaper$position")
                     setAttribute("android:defaultToDeviceProtectedStorage", "true")
                     setAttribute("android:directBootAware", "true")
                 }

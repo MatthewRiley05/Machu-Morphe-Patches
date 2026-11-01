@@ -15,6 +15,7 @@ internal const val BASE_EARTH_SUPER_WALLPAPER =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper;"
 internal const val BASE_EARTH_ENGINE =
     "Lcom/miui/miwallpaper/earth/superwallpaper/BaseEarthSuperWallpaper\$SuperWallpaperEngine;"
+internal const val EARTH_MRE_PLAYER = "Lcom/miui/mrengine/EarthMrePlayer;"
 
 private const val DISPLAY_UTILS =
     "Lcom/miui/miwallpaper/baselib/utils/DisplayUtils;"
@@ -346,6 +347,25 @@ internal object AodStateMethodFingerprint : Fingerprint(
     name = "goToAodState",
     returnType = "V",
     parameters = listOf("I"),
+)
+
+/**
+ * `BaseEarthSuperWallpaper$SuperWallpaperEngine.onCreate()` allocates the
+ * Filament player. The preview engine and the applied wallpaper engine share
+ * one service instance, so the previous player must be released first.
+ */
+internal object EngineCreateFingerprint : Fingerprint(
+    definingClass = BASE_EARTH_ENGINE,
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf("Landroid/view/SurfaceHolder;"),
+    filters = listOf(
+        methodCall(
+            definingClass = EARTH_MRE_PLAYER,
+            name = "<init>",
+            returnType = "V",
+        ),
+    ),
 )
 
 /**
