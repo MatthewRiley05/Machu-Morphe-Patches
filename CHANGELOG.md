@@ -1,3 +1,9 @@
+## [2.1.1-dev.1](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v2.1.0...v2.1.1-dev.1) (2026-11-24)
+
+### 🐛 Bug Fixes
+
+* **moon-wallpaper:** drop privileged moon phase settings writes ([e4b2267](https://github.com/MatthewRiley05/Machu-Morphe-Patches/commit/e4b226708dc2219c43428379cb8f0bc3b5a72a1a))
+
 ## [2.1.0](https://github.com/MatthewRiley05/Machu-Morphe-Patches/compare/v2.0.0...v2.1.0) (2026-11-24)
 
 ### ✨ New Features
