@@ -27,7 +27,7 @@ Add this repository as a patch source in Morphe Manager:
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v2.0.0](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v2.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+> **[v2.1.0](https://github.com/MatthewRiley05/Machu-Morphe-Patches/releases/tag/v2.1.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
 <details open>
 <summary>📦 Earth Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
@@ -43,6 +43,24 @@ Add this repository as a patch source in Morphe Manager:
 |----------|----------------|-----------|
 | [Delay screen-off zoom-out](#delay-screen-off-zoom-out) | Delays the AOD zoom-out on screen-off so the device's closing animation can finish first. The delay is configurable (default 500 ms). | • Zoom-out delay (ms) |
 | [Earth Super Wallpaper (AOSP)](#earth-super-wallpaper-aosp) | Makes the official Earth Super Wallpaper work on non-MIUI Android: removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the five desk positions, restores the unlock animation, and keeps picker applies stable. |  |
+
+</details>
+
+<details open>
+<summary>📦 Moon Super Wallpaper&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `com.miui.miwallpaper.moon`
+
+**🎯 Supported versions:**
+
+| ALPHA-2.6.575-09041449-ogl-64 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Delay screen-off zoom-out (Moon)](#delay-screen-off-zoom-out-moon) | Delays the AOD zoom-out on screen-off so the device's closing animation can finish first. The delay is configurable (default 500 ms). | • Zoom-out delay (ms) |
+| [Moon Super Wallpaper (AOSP)](#moon-super-wallpaper-aosp) | Makes the official Moon Super Wallpaper work on non-MIUI Android: removes MIUI framework crashes, fixes ambient-mode and weather settings, adds the five desk positions, restores the unlock animation, and keeps picker applies stable. |  |
 
 </details>
 
