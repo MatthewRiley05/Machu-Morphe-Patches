@@ -37,6 +37,8 @@ private const val WEATHER_UTILS_ASYNC =
     "Lcom/miui/miwallpaper/baselib/utils/WeatherUtils\$1;"
 private const val SUPER_WALLPAPER_UTILS =
     "Lcom/miui/miwallpaper/basesuperwallpaper/SuperWallpaperUtils;"
+private const val MOON_PHASE_UPDATE_HELPER =
+    "Lcom/miui/miwallpaper/moon/superwallpaper/MoonPhaseUpdateHelper;"
 private const val CONTEXT = "Landroid/content/Context;"
 
 private val ON_RECEIVE_PARAMETERS = listOf(
@@ -323,6 +325,20 @@ internal object WeatherSettingsWritesFingerprint : Fingerprint(
     name = "onPostExecute",
     returnType = "V",
     parameters = listOf("Landroid/util/Pair;"),
+)
+
+/**
+ * `MoonPhaseUpdateHelper.notifyAllMoonPhaseChangeChecked()` writes the last
+ * update time and moon phase to `Settings.Global`, which throws
+ * `SecurityException` without the signature-only `WRITE_SECURE_SETTINGS`
+ * permission. This runs during engine creation, so it crashes the wallpaper
+ * service before it can render.
+ */
+internal object MoonPhaseSettingsWritesFingerprint : Fingerprint(
+    definingClass = MOON_PHASE_UPDATE_HELPER,
+    name = "notifyAllMoonPhaseChangeChecked",
+    returnType = "V",
+    parameters = listOf(CONTEXT, "I"),
 )
 
 /**

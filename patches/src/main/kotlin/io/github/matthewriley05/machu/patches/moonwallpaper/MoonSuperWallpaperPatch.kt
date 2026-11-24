@@ -159,6 +159,38 @@ val moonSuperWallpaperPatch = bytecodePatch(
             )
         }
 
+        // MoonPhaseUpdateHelper persists the last phase update in
+        // Settings.Global. AOSP throws SecurityException for those writes, and
+        // the helper runs during engine creation, so the wallpaper service dies
+        // before it can render. Keep the in-memory callback flow, but drop the
+        // privileged writes.
+        val moonPhaseMatch = MoonPhaseSettingsWritesFingerprint.matchOrNull()
+            ?: throw PatchException("Failed to match $MoonPhaseSettingsWritesFingerprint")
+
+        val moonPhaseMethod = moonPhaseMatch.method
+        val moonPhaseInstructions = moonPhaseMethod.implementation!!.instructions
+
+        var removedMoonPhaseWrites = 0
+        for (index in moonPhaseInstructions.indices.reversed()) {
+            val instruction = moonPhaseInstructions[index]
+            val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+
+            if (reference != null &&
+                reference.definingClass == SETTINGS_GLOBAL &&
+                (reference.name == "putLong" || reference.name == "putInt")
+            ) {
+                moonPhaseMethod.replaceInstruction(index, "nop")
+                removedMoonPhaseWrites++
+            }
+        }
+
+        if (removedMoonPhaseWrites == 0) {
+            throw PatchException(
+                "MoonPhaseUpdateHelper.notifyAllMoonPhaseChangeChecked() no longer " +
+                    "writes Settings.Global; update the moon-phase settings patch.",
+            )
+        }
+
         // ------------------------------------------------------------------
         // Preview engines: skip Filament entirely.
         // ------------------------------------------------------------------
